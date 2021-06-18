@@ -137,16 +137,17 @@ public class AttachmentPresenter {
         attachmentMvpView.showPickAttachmentDialog(REQUEST_CODE_ATTACHMENT_URI);
     }
 
-    private void addAttachment(Uri uri) {
-        addAttachment(uri, null);
+    private void addExternalAttachment(Uri uri) {
+        addExternalAttachment(uri, null);
     }
 
-    private void addAttachment(AttachmentViewInfo attachmentViewInfo) {
+    private void addInternalAttachment(AttachmentViewInfo attachmentViewInfo) {
         if (attachments.containsKey(attachmentViewInfo.internalUri)) {
             throw new IllegalStateException("Received the same attachmentViewInfo twice!");
         }
 
         int loaderId = getNextFreeLoaderId();
+        // FIXME: Mark attachment as using an internal content URI
         Attachment attachment = Attachment.createAttachment(
                 attachmentViewInfo.internalUri, loaderId, attachmentViewInfo.mimeType, true);
         attachment = attachment.deriveWithMetadataLoaded(
@@ -155,16 +156,21 @@ public class AttachmentPresenter {
         addAttachmentAndStartLoader(attachment);
     }
 
-    public void addAttachment(Uri uri, String contentType) {
-        addAttachment(uri, contentType, false);
+    public void addExternalAttachment(Uri uri, String contentType) {
+        addAttachment(uri, contentType, false, false);
     }
 
-    private void addAttachment(Uri uri, String contentType, boolean allowMessageType) {
+    private void addInternalAttachment(Uri uri, String contentType, boolean allowMessageType) {
+        addAttachment(uri, contentType, false, true);
+    }
+
+    private void addAttachment(Uri uri, String contentType, boolean allowMessageType, boolean internalAttachment) {
         if (attachments.containsKey(uri)) {
             return;
         }
 
         int loaderId = getNextFreeLoaderId();
+        // FIXME: Use internalAttachment parameter
         Attachment attachment = Attachment.createAttachment(uri, loaderId, contentType, allowMessageType);
 
         addAttachmentAndStartLoader(attachment);
@@ -181,7 +187,7 @@ public class AttachmentPresenter {
                 allPartsAvailable = false;
                 continue;
             }
-            addAttachment(attachmentViewInfo);
+            addInternalAttachment(attachmentViewInfo);
         }
 
         return allPartsAvailable;
@@ -202,7 +208,7 @@ public class AttachmentPresenter {
             MessageReference messageReference = localMessage.makeMessageReference();
             Uri rawMessageUri = RawMessageProvider.getRawMessageUri(messageReference);
 
-            addAttachment(rawMessageUri, "message/rfc822", true);
+            addInternalAttachment(rawMessageUri, "message/rfc822", true);
         }
     }
 
@@ -343,7 +349,7 @@ public class AttachmentPresenter {
             for (int i = 0, end = clipData.getItemCount(); i < end; i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
                 if (uri != null) {
-                    addAttachment(uri);
+                    addExternalAttachment(uri);
                 }
             }
             return;
@@ -351,7 +357,7 @@ public class AttachmentPresenter {
 
         Uri uri = data.getData();
         if (uri != null) {
-            addAttachment(uri);
+            addExternalAttachment(uri);
         }
     }
 
