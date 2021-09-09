@@ -101,6 +101,7 @@ class GeneralSettingsDataStore(
             "notification_quick_delete" -> K9.notificationQuickDeleteBehaviour.name
             "lock_screen_notification_visibility" -> K9.lockScreenNotificationVisibility.name
             "background_ops" -> K9.backgroundOps.name
+            "messageview_preferred_content_type" -> K9.preferredContentType.name
             "notification_hide_subject" -> K9.notificationHideSubject.name
             "quiet_time_starts" -> K9.quietTimeStarts
             "quiet_time_ends" -> K9.quietTimeEnds
@@ -141,6 +142,7 @@ class GeneralSettingsDataStore(
                 K9.lockScreenNotificationVisibility = K9.LockScreenNotificationVisibility.valueOf(value)
             }
             "background_ops" -> setBackgroundOps(value)
+            "messageview_preferred_content_type" -> setContentType(value)
             "notification_hide_subject" -> K9.notificationHideSubject = K9.NotificationHideSubject.valueOf(value)
             "quiet_time_starts" -> K9.quietTimeStarts = value
             "quiet_time_ends" -> K9.quietTimeEnds = value
@@ -265,6 +267,13 @@ class GeneralSettingsDataStore(
         if (newBackgroundOps != K9.backgroundOps) {
             K9.backgroundOps = newBackgroundOps
             jobManager.scheduleAllMailJobs()
+        }
+    }
+
+    private fun setContentType(value: String) {
+        val newContentType = K9.PREF_CONT_TYPE.valueOf(value)
+        if (newContentType != K9.preferredContentType) {
+            K9.preferredContentType = newContentType
         }
     }
 }

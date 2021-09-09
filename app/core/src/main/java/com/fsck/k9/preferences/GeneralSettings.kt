@@ -12,11 +12,17 @@ package com.fsck.k9.preferences
 // TODO: Move over settings from K9
 data class GeneralSettings(
     val backgroundSync: BackgroundSync,
-    val showRecentChanges: Boolean
+    val showRecentChanges: Boolean,
+    val preferredContentType: PrefContentType
 )
 
 enum class BackgroundSync {
     ALWAYS,
     NEVER,
     FOLLOW_SYSTEM_AUTO_SYNC
+}
+
+enum class PrefContentType {
+    TEXT_HTML,
+    TEXT_PLAIN
 }

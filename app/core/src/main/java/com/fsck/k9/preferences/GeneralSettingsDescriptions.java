@@ -283,6 +283,9 @@ public class GeneralSettingsDescriptions {
         s.put("showRecentChanges", Settings.versions(
                 new V(73, new BooleanSetting(true))
         ));
+        s.put("preferredContentTypeK9", Settings.versions(
+                new V(75, new EnumSetting<>(K9.PREF_CONT_TYPE.class, K9.PREF_CONT_TYPE.TEXT_HTML))
+        ));
 
         SETTINGS = Collections.unmodifiableMap(s);
 
